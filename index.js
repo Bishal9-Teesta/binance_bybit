@@ -11,10 +11,11 @@ import binance_new_symbol from "./socket/binance_new_symbol.js"
 import perpetual_book from "./socket/perpetual_book.js"
 
 global.EventEmitter = new EventEmitter({ captureRejections: false })
-global.TWEAKER = 80
+global.TWEAKER = 0
 global.SPREAD_MARGIN = 0
 global.PERPETUAL_SYMBOLS = []
 global.FUTURE_PRICE = {}
+global.ONGOING = new Map()
 global.BYBIT = {
     book: {},
     trade_fee: 0.00025,
@@ -34,7 +35,6 @@ const main = async () => {
     // Initialize Environment Variables
     config()
     global.PERPETUAL_SYMBOLS = process.env.PERPETUAL_SYMBOLS.toString().trim().split(" ")
-
 
     await bybit_book()
     await binance_book()

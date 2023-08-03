@@ -11,6 +11,8 @@ const flow_manager = (underlying, date, strike, type) => {
     const binance_symbol = binance_contract(underlying, date, strike, type)
     const bybit_symbol = bybit_contract(underlying, date, strike, type)
 
+    if (global.ONGOING.get(`${binance_symbol}_${bybit_symbol}`)) return
+
     const binance_data = global.BINANCE.book[binance_symbol] || { b: [], a: [] }
     const bybit_data = global.BYBIT.book[bybit_symbol] || { b: [], a: [] }
 
@@ -32,25 +34,25 @@ const flow_manager = (underlying, date, strike, type) => {
     ) {
         
         const expiry = expiry_in_days(date)
-        opportunity = bybit_opportunity_checker(binance_data.a, bybit_data.b, future_price, expiry)
+        opportunity = bybit_opportunity_checker(binance_data.a, bybit_data.b, future_price, expiry, binance_symbol, bybit_symbol)
         opportunity.length > 0 && console.log("Bybit Opportunity: ", opportunity)
     }
 
     // ! Opportunity from Binance
-    // if (
-    //     (binance_top_bid !== 0 || bybit_top_ask !== 0) && 
-    //     (binance_top_bid > bybit_top_ask)
-    // ) {
+    if (
+        (binance_top_bid !== 0 || bybit_top_ask !== 0) && 
+        (binance_top_bid > bybit_top_ask)
+    ) {
         
-    //     const expiry = expiry_in_days(date)
-    //     opportunity = binance_opportunity_checker(binance_data.b, bybit_data.a, future_price, expiry)
-    //     opportunity.length > 0 && console.log("Binance Opportunity: ", opportunity)
-    // }
+        const expiry = expiry_in_days(date)
+        opportunity = binance_opportunity_checker(binance_data.b, bybit_data.a, future_price, expiry, binance_symbol, bybit_symbol)
+        opportunity.length > 0 && console.log("Binance Opportunity: ", opportunity)
+    }
 
     // Calculate Opportunity
     if (opportunity.length > 0) {
 
-        console.log("first")
+        // console.log("first")
     }
 }
 
